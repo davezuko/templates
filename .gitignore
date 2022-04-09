@@ -1,7 +1,0 @@
-.DS_Store
-*.log
-.rpt2_cache
-.env
-.vscode
-node_modules
-package-lock.json

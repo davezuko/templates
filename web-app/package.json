@@ -1,21 +1,42 @@
 {
-    "name": "",
+    "name": "@template/web-app",
     "version": "0.0.0",
     "repository": "",
-    "author": "",
-    "license": "UNLICENSED",
+    "author": "David Zukowski",
+    "license": "MIT",
     "type": "module",
-    "scripts": {
-        "build": "smite build",
-        "serve": "smite serve",
-        "start": "smite start"
+    "prettier": "@davezuko/prettier-config",
+    "eslintConfig": {
+        "extends": "@davezuko/eslint-config",
+        "ignorePatterns": [
+            "dist"
+        ]
     },
-    "smite": {
-        "build": {
-            "entryPoints": [
-                "./src/main.tsx",
-                "./src/css/global.css"
-            ]
-        }
+    "scripts": {
+        "build": "node ./scripts/build.js --minify --strip-console",
+        "build-dev": "node ./scripts/build.js --devtools --minify=0",
+        "serve": "node ./scripts/serve.js",
+        "start": "node ./scripts/start.js --devtools",
+        "format": "prettier . --write",
+        "check-eslint": "eslint .",
+        "check-typescript": "tsc --noEmit"
+    },
+    "dependencies": {
+        "@davezuko/eslint-config": "^0.2.0",
+        "@davezuko/prettier-config": "^0.1.0",
+        "@types/node": "^17.0.23",
+        "@types/react": "^18.0.1",
+        "@types/react-dom": "^18.0.0",
+        "compression": "^1.7.4",
+        "connect": "^3.7.0",
+        "copy-dir": "^1.3.0",
+        "esbuild": "^0.14.34",
+        "eslint": "^8.13.0",
+        "preact": "^10.7.1",
+        "prettier": "^2.6.2",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0",
+        "serve-static": "^1.15.0",
+        "typescript": "^4.6.3"
     }
 }
