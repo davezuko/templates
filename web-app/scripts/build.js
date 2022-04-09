@@ -1,17 +1,17 @@
 import fs from "fs"
-import util from "util"
 import esbuild from "esbuild"
-import _copydir from "copy-dir"
+import {minify as minify_html} from "html-minifier-terser"
 import {config} from "./_config.js"
 
-let copydir = util.promisify(_copydir)
 let verbose = process.argv.includes("--verbose")
 
 let main = async () => {
     await fs.promises.rm("dist", {force: true, recursive: true})
+
+    let minify = config.esbuild.minify ?? true
     let result = await esbuild.build({
         ...config.esbuild,
-        minify: config.esbuild.minify ?? true,
+        minify,
         metafile: true,
         define: {
             ...config.esbuild.define,
@@ -20,7 +20,23 @@ let main = async () => {
             ),
         },
     })
-    await copydir("./static", "./dist")
+
+    await fs.promises.cp("./static", "./dist", {recursive: true})
+
+    if (minify) {
+        let html_files = ["./dist/index.html"]
+        for (let file of html_files) {
+            let text = await fs.promises.readFile(file, "utf8")
+            let minified = await minify_html(text, {
+                minifyCSS: true,
+                minifyJS: false,
+                collapseWhitespace: true,
+                removeComments: true,
+            })
+            await fs.promises.writeFile(file, minified, "utf8")
+        }
+    }
+
     let text = await esbuild.analyzeMetafile(result.metafile, {verbose})
     console.info(text)
 }
