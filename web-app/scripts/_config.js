@@ -1,3 +1,4 @@
+import fs from "fs"
 import path from "path"
 
 let create_config = () => {
@@ -5,13 +6,10 @@ let create_config = () => {
     let enable_devtools = false
     let strip_console = false
 
+    let pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
     let config = {
         esbuild: {
-            entryPoints: {
-                main: "./src/main",
-                vendors: "./src/vendors.ts",
-                "css/global": "./src/css/global.css",
-            },
+            ...pkg.esbuild,
             outdir: "dist/assets",
             bundle: true,
             format: "esm",
