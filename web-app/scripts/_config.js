@@ -1,4 +1,3 @@
-import fs from "fs"
 import path from "path"
 
 let create_config = () => {
@@ -6,10 +5,13 @@ let create_config = () => {
     let enable_devtools = false
     let strip_console = false
 
-    let pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
     let config = {
         esbuild: {
-            ...pkg.esbuild,
+            entryPoints: {
+                main: "./src/main",
+                vendors: "./src/vendors.ts",
+                "css/global": "./src/css/global.css",
+            },
             outdir: "dist/assets",
             bundle: true,
             format: "esm",
@@ -82,9 +84,7 @@ let esbuild_plugin_react = (options) => {
                 build.onLoad(
                     {filter: /^preact\/debug$/, namespace: "preact/debug"},
                     () => {
-                        return {
-                            contents: "",
-                        }
+                        return {contents: ""}
                     },
                 )
                 build.onResolve({filter: /^preact\/debug$/}, () => {
@@ -102,7 +102,6 @@ let esbuild_plugin_react = (options) => {
                             process.cwd(),
                             "node_modules/preact/compat/dist/compat.module.js",
                         )
-                        // console.log("resolve %s -> %s", _args.path, dest)
                         return {path: dest}
                     },
                 )
@@ -111,7 +110,6 @@ let esbuild_plugin_react = (options) => {
                         process.cwd(),
                         "node_modules/preact/compat/client.mjs",
                     )
-                    // console.log("resolve %s -> %s", _args.path, dest)
                     return {path: dest}
                 })
             }
